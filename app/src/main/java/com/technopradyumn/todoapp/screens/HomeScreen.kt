@@ -61,6 +61,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -73,6 +74,7 @@ import com.technopradyumn.todoapp.R
 import com.technopradyumn.todoapp.database.TodoEntity
 import com.technopradyumn.todoapp.database.addDate
 import com.technopradyumn.todoapp.ui.theme.TodoAppTheme
+import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -339,11 +341,12 @@ fun LazyItemScope.TodoItem(
         animationSpec = tween(5), label = ""
     )
 
-//    val tiltDegree = remember(todo.id) { Random.nextDouble(-10.3, 1.3).toFloat() }
+    val tiltDegree = remember(todo.id) { Random.nextDouble(-1.3, 1.3).toFloat() }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .rotate(tiltDegree)
             .fillMaxSize()
             .animateItemPlacement(
                 animationSpec = spring(
