@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun SetStatusBarColor(statusBarColor: androidx.compose.ui.graphics.Color, contentColor: androidx.compose.ui.graphics.Color) {
+fun SetStatusBarColor(statusBarColor: Color, contentColor: Color) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
         systemUiController.setSystemBarsColor(
