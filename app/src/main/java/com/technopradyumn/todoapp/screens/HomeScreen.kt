@@ -30,6 +30,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -43,6 +44,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -167,8 +169,14 @@ fun HomeScreen(
                                 contentDescription = null,
                                 modifier = Modifier.width(36.dp)
                             )
-                            Spacer(modifier = Modifier.padding())
-                            Text(text = "To-do App")
+
+                            Spacer(modifier = Modifier.padding(4.dp))
+
+                            Text(text = "To-do App",
+                                style = LocalTextStyle.current.copy(
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
                         }
                     }
                 },
@@ -191,7 +199,8 @@ fun HomeScreen(
                                 isSearchActive = true
                             }
                         ) {
-                            Icon(imageVector = Icons.Default.Search, contentDescription = "Search Icon")
+                            Icon(imageVector = Icons.Default.Search, contentDescription = "Search Icon"
+                            ,modifier = Modifier.size(26.dp))
                         }
                     }
                 }
@@ -278,14 +287,23 @@ private fun SearchBar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        TextField(
+        OutlinedTextField(
             value = searchQuery,
             onValueChange = onSearchQueryChange,
             placeholder = { Text("Search") },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-
+            leadingIcon = {
+                IconButton(
+                    onClick = {}
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null
+                    )
+                }
+            },
             trailingIcon = {
                 IconButton(
                     onClick = onCloseSearch
