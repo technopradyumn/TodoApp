@@ -10,6 +10,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -59,12 +60,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.technopradyumn.todoapp.R
 import com.technopradyumn.todoapp.database.TodoEntity
 import com.technopradyumn.todoapp.database.addDate
 import com.technopradyumn.todoapp.ui.theme.TodoAppTheme
@@ -154,11 +157,19 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.primary),
                 title = {
                     if (!isSearchActive) {
-                        Text(text = "To-do App")
+                        Row {
+                            Image(painter = painterResource(id = R.drawable.app_ic),
+                                contentDescription = null,
+                                modifier = Modifier.width(36.dp)
+                            )
+                            Spacer(modifier = Modifier.padding())
+                            Text(text = "To-do App")
+                        }
                     }
                 },
                 actions = {

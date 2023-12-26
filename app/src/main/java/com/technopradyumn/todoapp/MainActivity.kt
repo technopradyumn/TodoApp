@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -25,7 +26,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    SetStatusBarColor(MaterialTheme.colorScheme.primary)
+                    SetStatusBarColor(
+                        statusBarColor = Color.White,
+                        contentColor = Color.Black
+                    )
                     HomeScreen()
                 }
             }
@@ -34,11 +38,13 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun SetStatusBarColor(color: androidx.compose.ui.graphics.Color) {
+fun SetStatusBarColor(statusBarColor: androidx.compose.ui.graphics.Color, contentColor: androidx.compose.ui.graphics.Color) {
     val systemUiController = rememberSystemUiController()
     SideEffect {
-        systemUiController.setSystemBarsColor(color)
-
+        systemUiController.setSystemBarsColor(
+            color = statusBarColor,
+            darkIcons = contentColor == Color.Black
+        )
     }
 }
 

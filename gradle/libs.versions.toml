@@ -1,7 +1,7 @@
 [versions]
 agp = "8.3.0-alpha18"
-koinAndroid = "3.4.0"
-koinAndroidxCompose = "3.4.4"
+koinAndroid = "3.5.3"
+koinAndroidxCompose = "3.5.3"
 kotlin = "1.9.0"
 coreKtx = "1.12.0"
 junit = "4.13.2"
@@ -9,7 +9,7 @@ junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 lifecycleRuntimeKtx = "2.6.2"
 activityCompose = "1.8.2"
-composeBom = "2023.08.00"
+composeBom = "2023.10.01"
 roomKtx = "2.4.2"
 roomRuntime = "2.6.1"
 
