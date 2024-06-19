@@ -1,5 +1,6 @@
 package com.technopradyumn.todoapp.database
 
+import androidx.compose.runtime.Immutable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -10,6 +11,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
+@Immutable
 @Entity("todos")
 data class TodoEntity (
     @PrimaryKey(autoGenerate = true)

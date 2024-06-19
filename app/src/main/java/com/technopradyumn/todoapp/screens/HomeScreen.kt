@@ -30,7 +30,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -40,6 +39,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -50,18 +51,16 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -70,7 +69,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.technopradyumn.todoapp.R
 import com.technopradyumn.todoapp.database.TodoEntity
 import com.technopradyumn.todoapp.database.addDate
 import com.technopradyumn.todoapp.ui.theme.TodoAppTheme
@@ -83,18 +81,16 @@ fun HomeScreen(
 ) {
     val todos by viewModel.todos.collectAsState()
 
-    var todo by remember { mutableStateOf(emptyList<TodoEntity>()) }
+    var todo by rememberSaveable { mutableStateOf(emptyList<TodoEntity>()) }
 
-    val lazyListState = rememberLazyListState()
+    var isSearchActive by rememberSaveable { mutableStateOf(false) }
+    var searchQuery by rememberSaveable { mutableStateOf("") }
 
-    var isSearchActive by remember { mutableStateOf(false) }
-    var searchQuery by remember { mutableStateOf("") }
-
-    val (dialogOpen, setDialogOpen) = remember { mutableStateOf(false) }
+    val (dialogOpen, setDialogOpen) = rememberSaveable { mutableStateOf(false) }
 
     if (dialogOpen) {
-        val (title, setTitle) = remember { mutableStateOf("") }
-        val (subTitle, setSubTitle) = remember { mutableStateOf("") }
+        val (title, setTitle) = rememberSaveable { mutableStateOf("") }
+        val (subTitle, setSubTitle) = rememberSaveable { mutableStateOf("") }
 
         Dialog(onDismissRequest = { setDialogOpen(false) }) {
                 Column(
@@ -167,10 +163,10 @@ fun HomeScreen(
                 title = {
                     if (!isSearchActive) {
                         Row {
-                            Image(painter = painterResource(id = R.drawable.app_ic),
-                                contentDescription = null,
-                                modifier = Modifier.width(36.dp)
-                            )
+//                            Image(painter = painterResource(id = R.drawable.app_ic),
+//                                contentDescription = null,
+//                                modifier = Modifier.width(36.dp)
+//                            )
 
                             Spacer(modifier = Modifier.padding(4.dp))
 
@@ -254,18 +250,16 @@ fun HomeScreen(
                             end = 8.dp,
                             start = 8.dp
                         ),
-                    verticalArrangement =  Arrangement.spacedBy(8.dp),
-                    state = lazyListState
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    state = rememberLazyListState()
                 ) {
                     items(
                         if (!isSearchActive) {
-                            todos.sortedWith(compareBy({ it.done }, { it.title }))
+                            todos.sortedBy{ it.done }
                         } else {
                             viewModel.filterTodos(searchQuery)
                         },
-                        key = {
-                            it.id
-                        }
+                        key = { it.id }
                     ) { todo ->
                         TodoItem(
                             todo = todo,
@@ -341,12 +335,11 @@ fun LazyItemScope.TodoItem(
         animationSpec = tween(5), label = ""
     )
 
-    val tiltDegree = remember(todo.id) { Random.nextDouble(-1.3, 1.3).toFloat() }
+    val tiltDegree = rememberSaveable(todo.id) { Random.nextDouble(-1.3, 1.3).toFloat() }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .rotate(tiltDegree)
             .fillMaxSize()
             .animateItemPlacement(
                 animationSpec = spring(
@@ -356,93 +349,101 @@ fun LazyItemScope.TodoItem(
             ),
         contentAlignment = Alignment.TopStart
     ) {
-        Row(
+        Card(elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
             modifier = Modifier
-                .clip(RoundedCornerShape(5.dp))
-                .background(backgroundColor)
-                .clickable {
-                    onClick()
-                }
-                .padding(horizontal = 16.dp, vertical = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .fillMaxSize()
+                .fillMaxWidth()
         ) {
-            Row(modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-
+            Row(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(5.dp))
+                    .background(backgroundColor)
+                    .clickable {
+                        onClick()
+                    }
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.onPrimary)
-                        .padding(4.dp),
-                    contentAlignment = Alignment.Center
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+
                 ) {
-                    Row {
-                        AnimatedVisibility(
-                            visible = todo.done,
-                            enter = scaleIn() + fadeIn(),
-                            exit = scaleOut() + fadeOut()
-                        ) {
-                            Icon(Icons.Default.Check, contentDescription = null)
+                    Box(
+                        modifier = Modifier
+                            .size(28.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.onPrimary)
+                            .padding(4.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Row {
+                            AnimatedVisibility(
+                                visible = todo.done,
+                                enter = scaleIn() + fadeIn(),
+                                exit = scaleOut() + fadeOut()
+                            ) {
+                                Icon(Icons.Default.Check, contentDescription = null)
+                            }
+                        }
+
+                        Row {
+                            AnimatedVisibility(
+                                visible = !todo.done,
+                                enter = scaleIn() + fadeIn(),
+                                exit = scaleOut() + fadeOut()
+                            ) {
+                                Icon(Icons.Default.Close, contentDescription = null)
+                            }
                         }
                     }
 
-                    Row {
-                        AnimatedVisibility(
-                            visible = !todo.done,
-                            enter = scaleIn() + fadeIn(),
-                            exit = scaleOut() + fadeOut()
-                        ) {
-                            Icon(Icons.Default.Close, contentDescription = null)
-                        }
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = todo.title,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            color = Color.White
+                        )
+                        Text(
+                            text = todo.subtitle,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            color = Color.White
+                        )
+                        Text(
+                            text = todo.addDate,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp,
+                            color = Color.White
+                        )
                     }
-                }
 
-                Column(modifier = Modifier.weight(1f)
-                ) {
-                    Text(
-                        text = todo.title,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        color = Color.White
-                    )
-                    Text(
-                        text = todo.subtitle,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        color = Color.White
-                    )
-                    Text(
-                        text = todo.addDate,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 12.sp,
-                        color = Color.White
-                    )
-                }
+                    Spacer(modifier = Modifier.width(8.dp))
 
-                Spacer(modifier = Modifier.width(8.dp))
+                    Box(
+                        modifier = Modifier
+                            .size(28.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.onPrimary)
+                            .padding(4.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = null,
+                            modifier = Modifier.clickable {
+                                onDelete()
+                            }
+                        )
+                    }
 
-                Box(
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.onPrimary)
-                        .padding(4.dp),
-                    contentAlignment = Alignment.Center,
-                ){
-                    Icon(
-                        Icons.Default.Delete,
-                        contentDescription = null,
-                        modifier = Modifier.clickable {
-                            onDelete()
-                        }
-                    )
                 }
 
             }
-
         }
 
     }

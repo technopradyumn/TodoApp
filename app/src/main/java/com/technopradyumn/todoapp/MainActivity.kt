@@ -47,11 +47,3 @@ fun SetStatusBarColor(statusBarColor: Color, contentColor: Color) {
         )
     }
 }
-
-@Preview(showSystemUi = true)
-@Composable
-fun HomeScreenPreview() {
-    TodoAppTheme {
-        HomeScreen()
-    }
-}
